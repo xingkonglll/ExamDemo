@@ -10,7 +10,7 @@ select count(a.msisdn) uv
                  where sex='男'
                  group by msisdn)b 
             on a.msisdn=b.msisdn
-         where a.pv>=100)c;
+         where a.pv>100)c;
 
 1.2
 select d.msisdn
