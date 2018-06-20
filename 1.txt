@@ -1,0 +1,6 @@
+﻿select count(distinct a.msisdn) as uv
+ from (select msisdn from PAGEVISIT
+        where record_day between '20171001' and '20171007') a
+ join (select msisdn from USER_INFO
+        where sex='男')b
+   on a.msisdn=b.msisdn;
