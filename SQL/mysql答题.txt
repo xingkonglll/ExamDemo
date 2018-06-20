@@ -1,0 +1,45 @@
+1.1 
+select count(a.msisdn) uv
+  from (select a.msisdn,a.pv
+          from (select msisdn,sum(pv) as pv 
+                  from pagevisit
+                 where record_day between '20171001' and '20171007'
+                 group by msisdn)a
+          join (select msisdn
+                  from user_info
+                 where sex='男'
+                 group by msisdn)b 
+            on a.msisdn=b.msisdn
+         where a.pv>=100)c;
+
+1.2
+select d.msisdn
+  from (select b.msisdn,b.dd,count(1) 
+          from (select a.msisdn,a.record_day,a.pv,(a.record_day-a.rn) as dd 
+                  from (select msisdn,record_day,pv,row_number()over(partition by msisdn order by record_day,pv) as rn
+                          from PAGEVISIT
+                         where record_day between '20171001' and '20171007')a)b
+         group by b.msisdn,b.dd
+        having count(1)>=3)d;		 
+		 
+2.		 
+select c.dept_name,c.name,c.salary	
+from (select id,name,salary,a.departmentid,b.dept_name,dense_rank()over(partition by departmentid order by salary desc) as rn
+        from employee a
+        left join department b 
+          on a.departmentid=b.departmentid)c
+  where c.rn<=3;
+  
+3.
+select request_at,
+       round(sum(case when substr(upper(status),1,9)='cancelled' then 1 else 0 end)/count(*),2) cancel_rate
+  from trips a 
+  join users b 
+    on a.cliend_id =b.user_id
+ where request_at >= '2013-10-01'
+   and request_at <= '2013-10-03' 
+   and upper(banned) = 'no' 
+ group by request_at;
+
+  
+		 
